@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOUS man salon — Loyalty Card</title>
+<style>
+  :root {
+    --black: #0d0d0d;
+    --white: #ffffff;
+    --grey: #f2f2f2;
+    --grey-mid: #d9d9d9;
+    --grey-text: #6b6b6b;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--grey);
+    color: var(--black);
+    -webkit-font-smoothing: antialiased;
+    padding: 32px 20px 60px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  header.hero {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  header.hero .brand {
+    display: inline-block;
+    background: var(--black);
+    color: var(--white);
+    letter-spacing: 0.35em;
+    font-size: 13px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+  header.hero h1 {
+    margin-top: 16px;
+    font-size: 30px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  header.hero p { margin-top: 8px; color: var(--grey-text); font-size: 14px; letter-spacing: 0.05em; }
+  section {
+    background: var(--white);
+    border: 1px solid var(--grey-mid);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  .sec-tag {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .sec-tag .num {
+    background: var(--black);
+    color: var(--white);
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .sec-tag h2 {
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  /* ---- Customer card ---- */
+  .card-face {
+    border: 2px solid var(--black);
+    border-radius: 12px;
+    padding: 22px;
+    background: var(--white);
+  }
+  .card-face .row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .card-face .name { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
+  .card-face .cid { font-size: 12px; color: var(--grey-text); letter-spacing: 0.12em; margin-top: 4px; }
+  .redeem-badge {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1.5px solid var(--black);
+    background: var(--white);
+    color: var(--black);
+    font-weight: 700;
+  }
+  .redeem-badge.on { background: var(--black); color: var(--white); }
+  .stamps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+    gap: 10px;
+    margin: 22px 0 10px;
+    max-width: 480px;
+  }
+  .stamp-slot {
+    aspect-ratio: 1;
+    border: 1.5px solid var(--black);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    background: var(--white);
+  }
+  .stamp-slot.filled { background: var(--black); color: var(--white); }
+  .progress-track {
+    height: 10px;
+    background: var(--grey);
+    border: 1px solid var(--grey-mid);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 14px 0 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--black);
+    width: 0%;
+    transition: width 0.35s ease;
+  }
+  .progress-label { font-size: 13px; color: var(--grey-text); letter-spacing: 0.06em; }
+  .actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  button {
+    font-family: inherit;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    padding: 12px 20px;
+    border-radius: 999px;
+    border: 1.5px solid var(--black);
+    cursor: pointer;
+    background: var(--white);
+    color: var(--black);
+    transition: all 0.15s ease;
+  }
+  button:hover { background: var(--black); color: var(--white); }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
+  button:disabled:hover { background: var(--white); color: var(--black); }
+  button.primary { background: var(--black); color: var(--white); }
+  button.primary:hover { background: #2a2a2a; }
+  /* ---- Owner dashboard ---- */
+  .dash-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .dash-table th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--grey-text);
+    padding: 10px 12px;
+    border-bottom: 1.5px solid var(--black);
+  }
+  .dash-table td { padding: 12px; border-bottom: 1px solid var(--grey-mid); }
+  .dash-table tr.customer-row { cursor: pointer; transition: background 0.12s ease; }
+  .dash-table tr.customer-row:hover { background: var(--grey); }
+  .dash-table tr.selected { background: var(--black); color: var(--white); }
+  .dash-table tr.selected .muted { color: #bbb; }
+  .pill {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .pill.done { background: var(--black); border-color: var(--black); color: var(--white); }
+  tr.selected .pill.done { background: var(--white); color: var(--black); }
+  .muted { color: var(--grey-text); font-size: 12px; }
+  .hint { margin-top: 12px; font-size: 12px; color: var(--grey-text); letter-spacing: 0.05em; }
+  /* ---- Quick stats ---- */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+  .stat-box {
+    border: 1.5px solid var(--black);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+  }
+  .stat-box .value { font-size: 34px; font-weight: 700; line-height: 1.1; }
+  .stat-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--grey-text); margin-top: 6px; }
+  .stat-box.invert { background: var(--black); color: var(--white); }
+  .stat-box.invert .label { color: #bbb; }
+  footer { text-align: center; font-size: 12px; color: var(--grey-text); letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="brand">HOUS man salon</span>
+    <h1>Loyalty Card</h1>
+    <p>Collect stamps · Reach the goal · Claim your reward</p>
+  </header>
+
+  <!-- SECTION 1: Customer Loyalty Card -->
+  <section>
+    <div class="sec-tag"><span class="num">1</span><h2>Customer Loyalty Card</h2></div>
+    <div class="card-face">
+      <div class="row-top">
+        <div>
+          <div class="name" id="cardName">—</div>
+          <div class="cid" id="cardId">Customer ID: —</div>
+        </div>
+        <div class="redeem-badge" id="cardBadge">Not Redeemed</div>
+      </div>
+      <div class="stamps" id="stampGrid"></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0 of 8 stamps to a free premium haircut</div>
+      <div class="actions">
+        <button class="primary" id="btnAdd">+ Add Stamp</button>
+        <button id="btnRemove">− Remove Stamp</button>
+        <button id="btnRedeem">Mark Redeemed</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: Owner Dashboard -->
+  <section>
+    <div class="sec-tag"><span class="num">2</span><h2>Owner Dashboard</h2></div>
+    <table class="dash-table">
+      <thead>
+        <tr><th>Customer</th><th>ID</th><th>Stamps</th><th>Status</th></tr>
+      </thead>
+      <tbody id="dashBody"></tbody>
+    </table>
+    <div class="hint">Tap a customer row to load their card in Section 1.</div>
+  </section>
+
+  <!-- SECTION 3: Quick Stats -->
+  <section>
+    <div class="sec-tag"><span class="num">3</span><h2>Quick Stats</h2></div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="value" id="statTotal">0</div><div class="label">Total Customers</div></div>
+      <div class="stat-box invert"><div class="value" id="statRedeemed">0</div><div class="label">Redeemed</div></div>
+      <div class="stat-box"><div class="value" id="statClose">0</div><div class="label">Close to Reward (6+)</div></div>
+    </div>
+  </section>
+
+  <footer>Sample data only · Nothing is saved between visits · HOUS man salon, Kuala Lumpur</footer>
+</div>
+
+<script>
+const GOAL = 8;
+const CLOSE_THRESHOLD = 6;
+
+// Sample data — made up, Malaysia-specific
+let customers = [
+  { id: "HMS-0012", name: "Ahmad Zulkifli",  stamps: 8, redeemed: true },
+  { id: "HMS-0034", name: "Rajesh Kumar",    stamps: 6, redeemed: false },
+  { id: "HMS-0047", name: "Muhammad Aiman",  stamps: 3, redeemed: false },
+  { id: "HMS-0059", name: "Daniel Wong",     stamps: 5, redeemed: false }
+];
+
+let selectedId = customers[0].id;
+
+function getSelected() {
+  return customers.find(c => c.id === selectedId);
+}
+
+function renderCustomerCard() {
+  const c = getSelected();
+  if (!c) return;
+  document.getElementById("cardName").textContent = c.name;
+  document.getElementById("cardId").textContent = "Customer ID: " + c.id;
+  const badge = document.getElementById("cardBadge");
+  badge.textContent = c.redeemed ? "Redeemed ✓" : "Not Redeemed";
+  badge.classList.toggle("on", c.redeemed);
+
+  const grid = document.getElementById("stampGrid");
+  grid.innerHTML = "";
+  for (let i = 0; i < GOAL; i++) {
+    const slot = document.createElement("div");
+    slot.className = "stamp-slot" + (i < c.stamps ? " filled" : "");
+    slot.textContent = i < c.stamps ? "✓" : "";
+    grid.appendChild(slot);
+  }
+  const pct = Math.min(100, (c.stamps / GOAL) * 100);
+  document.getElementById("progressFill").style.width = pct + "%";
+  const remaining = Math.max(0, GOAL - c.stamps);
+  document.getElementById("progressLabel").textContent =
+    c.stamps >= GOAL
+      ? "Reward goal reached — free premium haircut ready to claim!"
+      : c.stamps + " of " + GOAL + " stamps · " + remaining + " more to a free premium haircut";
+
+  document.getElementById("btnRedeem").disabled = c.redeemed || c.stamps < GOAL;
+  document.getElementById("btnAdd").disabled = c.redeemed;
+  document.getElementById("btnRemove").disabled = c.redeemed || c.stamps === 0;
+}
+
+function renderDashboard() {
+  const tbody = document.getElementById("dashBody");
+  tbody.innerHTML = "";
+  customers.forEach(c => {
+    const tr = document.createElement("tr");
+    tr.className = "customer-row" + (c.id === selectedId ? " selected" : "");
+    tr.innerHTML =
+      "<td><strong>" + c.name + "</strong></td>" +
+      "<td class='muted'>" + c.id + "</td>" +
+      "<td>" + c.stamps + " / " + GOAL + "</td>" +
+      "<td><span class='pill " + (c.redeemed ? "done" : "") + "'>" + (c.redeemed ? "Redeemed" : "Active") + "</span></td>";
+    tr.addEventListener("click", () => {
+      selectedId = c.id;
+      renderAll();
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function renderStats() {
+  document.getElementById("statTotal").textContent = customers.length;
+  document.getElementById("statRedeemed").textContent = customers.filter(c => c.redeemed).length;
+  document.getElementById("statClose").textContent = customers.filter(c => !c.redeemed && c.stamps >= CLOSE_THRESHOLD).length;
+}
+
+function renderAll() {
+  renderCustomerCard();
+  renderDashboard();
+  renderStats();
+}
+
+document.getElementById("btnAdd").addEventListener("click", () => {
+  const c = getSelected();
+  if (c && !c.redeemed && c.stamps < GOAL) c.stamps++;
+  renderAll();
+});
+
+document.getElementById("btnRemove").addEventListener("click", () => {
+  const c = getSelected();
+  if (c && !c.redeemed && c.stamps > 0) c.stamps--;
+  renderAll();
+});
+
+document.getElementById("btnRedeem").addEventListener("click", () => {
+  const c = getSelected();
+  if (c && c.stamps >= GOAL) c.redeemed = true;
+  renderAll();
+});
+
+renderAll();
+</script>
+</body>
+</html>
