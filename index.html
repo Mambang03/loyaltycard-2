@@ -54,12 +54,17 @@
   /* ---- Customer card ---- */
   .card-face { border: 2px solid var(--black); border-radius: 12px; padding: 22px; background: var(--white); }
   .card-face .row-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; }
+  .row-top > div:first-child { flex: 1 1 auto; min-width: 0; }
   .card-face .name { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
   .card-face .cid { font-size: 12px; color: var(--grey-text); letter-spacing: 0.12em; margin-top: 4px; }
   .redeem-badge {
     font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
     padding: 7px 14px; border-radius: 999px;
     border: 1.5px solid var(--black); background: var(--white); color: var(--black); font-weight: 700;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    width: fit-content;
+    align-self: flex-start;
   }
   .redeem-badge.on { background: var(--black); color: var(--white); }
   .stamps { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 10px; margin: 22px 0 10px; max-width: 480px; }
@@ -117,6 +122,75 @@
   tr.selected .pill.done { background: var(--white); color: var(--black); }
   .muted { color: var(--grey-text); font-size: 12px; }
   .hint { margin-top: 12px; font-size: 12px; color: var(--grey-text); letter-spacing: 0.05em; }
+  /* ---- Flip card ---- */
+  .flip-scene { perspective: 1400px; }
+  .flip-card {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.4, 0.1, 0.2, 1);
+    min-height: 380px;
+  }
+  .flip-card.flipped { transform: rotateY(180deg); }
+  .flip-face {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border: 2px solid var(--black);
+    border-radius: 18px;
+    padding: 26px;
+    background: var(--white);
+  }
+  .flip-back {
+    position: absolute; top: 0; left: 0; right: 0;
+    transform: rotateY(180deg);
+    min-height: 380px;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Depan kad: premium black */
+  .flip-front {
+    background: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 55%, #2e2e2e 100%);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 380px;
+  }
+  .card-brand-top { display: flex; align-items: center; gap: 14px; }
+  .card-brand-logo {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--white); color: var(--black);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 20px; letter-spacing: 0.05em;
+    border: 2px solid var(--white);
+  }
+  .card-brand-name { font-size: 18px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+  .card-brand-tag { font-size: 11px; color: #bbb; letter-spacing: 0.14em; margin-top: 4px; text-transform: uppercase; }
+  .card-front-mid { margin: 30px 0; }
+  .card-member-name { font-size: 26px; font-weight: 700; letter-spacing: 0.06em; }
+  .card-member-id { font-size: 12px; color: #aaa; letter-spacing: 0.18em; margin-top: 6px; }
+  .card-front-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .card-chip {
+    width: 46px; height: 34px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #d9d9d9, #f2f2f2, #d9d9d9);
+    border: 1px solid #999;
+    position: relative;
+  }
+  .card-chip::after {
+    content: "";
+    position: absolute; inset: 6px 10px;
+    border: 1px solid #999;
+    border-radius: 3px;
+  }
+  .card-reward-line { font-size: 11px; color: #ddd; letter-spacing: 0.16em; text-transform: uppercase; text-align: right; }
+  .flip-hint { font-size: 11px; color: #888; letter-spacing: 0.1em; margin-top: 18px; text-transform: uppercase; }
+  /* Belakang kad: perk list */
+  .card-perks { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+  .card-perks span {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid var(--black); border-radius: 999px; padding: 6px 12px; font-weight: 700;
+  }
+  .flip-back .actions.owner-only { margin-top: auto; }
   /* ---- Scanner ---- */
   .scanner-box { border: 1.5px solid var(--black); border-radius: 12px; padding: 18px; text-align: center; }
   .scanner-box video { width: 100%; max-width: 420px; border-radius: 10px; border: 1.5px solid var(--black); background: var(--black); display: block; margin: 0 auto; }
@@ -178,34 +252,83 @@
     <p id="heroSub">Collect stamps · Reach the goal · Claim your reward</p>
   </header>
 
+  <!-- SCANNER: paling atas, owner only -->
+  <section class="owner-only">
+    <div class="sec-tag"><span class="num">✓</span><h2>Scan Customer QR</h2>
+      <button class="primary small" id="btnScanToggle" style="margin-left:auto">▶ Mula Scan</button>
+    </div>
+    <div class="scanner-box" id="scannerBox" style="display:none">
+      <video id="scanVideo" autoplay playsinline muted></video>
+      <div class="scan-msg" id="scanMsg">Arahkan kamera ke QR pelanggan…</div>
+    </div>
+    <div class="scan-result" id="scanResult">
+      <div class="big" id="scanName">—</div>
+      <div class="pts" id="scanPoints">—</div>
+      <div class="actions" style="justify-content:center">
+        <button class="primary small" id="btnScanStamp">+ Beri 1 Setem</button>
+        <button class="small" id="btnScanClose">Tutup</button>
+      </div>
+    </div>
+  </section>
+
   <!-- SECTION 1: Customer Loyalty Card -->
   <section>
-    <div class="sec-tag"><span class="num">1</span><h2>Customer Loyalty Card</h2></div>
-    <div class="card-face">
-      <div class="row-top">
-        <div>
-          <div class="name" id="cardName">—</div>
-          <div class="cid" id="cardId">Customer ID: —</div>
+    <div class="sec-tag"><span class="num">1</span><h2>Customer Loyalty Card</h2><button class="small" id="btnFlip" style="margin-left:auto">⇄ Flip Card</button></div>
+    <div class="flip-scene">
+      <div class="flip-card" id="flipCard">
+        <!-- DEPAN: branding -->
+        <div class="flip-face flip-front">
+          <div class="card-brand-top">
+            <span class="card-brand-logo">HO</span>
+            <div>
+              <div class="card-brand-name">HOUS MAN SALON</div>
+              <div class="card-brand-tag">Men's Grooming · Kuala Lumpur</div>
+            </div>
+          </div>
+          <div class="card-front-mid">
+            <div class="card-member-name" id="memberName">—</div>
+            <div class="card-member-id" id="memberId">MEMBER ID —</div>
+          </div>
+          <div class="card-front-bottom">
+            <div class="card-chip"></div>
+            <div class="card-reward-line" id="cardRewardLine">Loyalty Member</div>
+          </div>
+          <div class="flip-hint">Tap "Flip Card" untuk lihat setem &amp; progress</div>
         </div>
-        <div class="redeem-badge" id="cardBadge">Not Redeemed</div>
+        <!-- BELAKANG: setem & ciri -->
+        <div class="flip-face flip-back">
+          <div class="row-top">
+            <div>
+              <div class="name" id="cardName">—</div>
+              <div class="cid" id="cardId">Customer ID: —</div>
+            </div>
+            <div class="redeem-badge" id="cardBadge">Not Redeemed</div>
+          </div>
+          <div class="stamps" id="stampGrid"></div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="progress-label" id="progressLabel">0 of 8 stamps to a free premium haircut</div>
+          <div class="actions owner-only">
+            <button class="primary" id="btnAdd">+ Add Stamp</button>
+            <button id="btnRemove">− Remove Stamp</button>
+            <button id="btnRedeem">Mark Redeemed</button>
+          </div>
+          <div class="card-perks">
+            <span>✓ 1 stamp per visit</span>
+            <span>✓ Free reward at goal</span>
+            <span>✓ Valid at all branches</span>
+          </div>
+        </div>
       </div>
-      <div class="stamps" id="stampGrid"></div>
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-label" id="progressLabel">0 of 8 stamps to a free premium haircut</div>
-      <div class="actions owner-only">
-        <button class="primary" id="btnAdd">+ Add Stamp</button>
-        <button id="btnRemove">− Remove Stamp</button>
-        <button id="btnRedeem">Mark Redeemed</button>
-      </div>
-      <div class="qr-box">
-        <div class="qr-frame"><div id="qrCode"></div></div>
-        <div class="qr-label" id="qrLabel">Scan or share this code to view the card</div>
-        <div class="qr-label" id="qrWarning" style="display:none;color:#0d0d0d;font-weight:700"></div>
-        <div class="actions" style="justify-content:center"><button class="small" id="btnDownloadQr">⬇ Download QR (PNG)</button></div>
-      </div>
-      <div class="chart-wrap owner-only">
-        <h3>Stamps Collected Over Time</h3>
-        <canvas id="chartCanvas" width="880" height="180"></canvas>
+    </div>
+    <div class="qr-box">
+      <div class="qr-frame"><div id="qrCode"></div></div>
+      <div class="qr-label" id="qrLabel">Scan or share this code to view the card</div>
+      <div class="qr-label" id="qrWarning" style="display:none;color:#0d0d0d;font-weight:700"></div>
+      <div class="actions" style="justify-content:center"><button class="small" id="btnDownloadQr">⬇ Download QR (PNG)</button></div>
+    </div>
+    <div class="chart-wrap owner-only">
+      <h3>Stamps Collected Over Time</h3>
+      <canvas id="chartCanvas" width="880" height="180"></canvas>
       </div>
     </div>
   </section>
@@ -225,23 +348,6 @@
       <tbody id="dashBody"></tbody>
     </table>
     <div class="hint">Tap a customer row to load their card in Section 1. Stamping is owner-only; customers use the QR link to view read-only.</div>
-  </section>
-
-  <!-- SECTION 2b: Scanner -->
-  <section class="owner-only">
-    <div class="sec-tag"><span class="num">✓</span><h2>Scan Customer QR</h2></div>
-    <div class="scanner-box">
-      <video id="scanVideo" autoplay playsinline muted></video>
-      <div class="scan-msg" id="scanMsg">Kamera dipapar di sini — arahkan ke QR pelanggan untuk beri setem</div>
-    </div>
-    <div class="scan-result" id="scanResult">
-      <div class="big" id="scanName">—</div>
-      <div class="pts" id="scanPoints">—</div>
-      <div class="actions" style="justify-content:center">
-        <button class="primary small" id="btnScanStamp">+ Beri 1 Setem</button>
-        <button class="small" id="btnScanClose">Tutup</button>
-      </div>
-    </div>
   </section>
 
   <!-- SECTION 3: Quick Stats -->
@@ -10547,6 +10653,11 @@ function renderCustomerCard() {
   if (!c) return;
   document.getElementById("cardName").textContent = c.name;
   document.getElementById("cardId").textContent = "Customer ID: " + c.id;
+  // Depan kad flip
+  document.getElementById("memberName").textContent = c.name;
+  document.getElementById("memberId").textContent = "MEMBER ID " + c.id;
+  document.getElementById("cardRewardLine").textContent =
+    c.redeemed ? "Reward Ready · " + settings.reward : settings.goal + " Stamps · " + settings.reward;
   const badge = document.getElementById("cardBadge");
   badge.textContent = c.redeemed ? "Redeemed ✓" : "Not Redeemed";
   badge.classList.toggle("on", c.redeemed);
@@ -10709,6 +10820,18 @@ document.getElementById("btnCsv").addEventListener("click", () => {
 
 document.getElementById("btnDownloadQr").addEventListener("click", downloadQrPng);
 
+/* ---- Flip kad ---- */
+document.getElementById("btnFlip").addEventListener("click", () => {
+  document.getElementById("flipCard").classList.toggle("flipped");
+});
+// Auto-flip ke depan bila owner stem/redeem (tunjuk branding), ke belakang bila pelanggan ditukar
+document.getElementById("btnAdd").addEventListener("click", () => {
+  document.getElementById("flipCard").classList.remove("flipped");
+});
+document.getElementById("btnRedeem").addEventListener("click", () => {
+  document.getElementById("flipCard").classList.remove("flipped");
+});
+
 /* ---- Scanner QR pelanggan (admin) ---- */
 const scanVideo = document.getElementById("scanVideo");
 const scanMsg = document.getElementById("scanMsg");
@@ -10726,6 +10849,9 @@ function startScanner() {
     scanMsg.textContent = "Kamera tidak disokong pada peranti/pelayar ini.";
     return;
   }
+  document.getElementById("scannerBox").style.display = "";
+  const btn = document.getElementById("btnScanToggle");
+  btn.textContent = "■ Berhenti Scan";
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
     .then(stream => {
       scanStream = stream;
@@ -10735,11 +10861,17 @@ function startScanner() {
     })
     .catch(() => {
       scanMsg.textContent = "Tidak dapat akses kamera. Benarkan kebenaran kamera dalam pelayar.";
+      toggleScannerUI(false);
     });
+}
+function toggleScannerUI(on) {
+  document.getElementById("scannerBox").style.display = on ? "" : "none";
+  document.getElementById("btnScanToggle").textContent = on ? "■ Berhenti Scan" : "▶ Mula Scan";
 }
 
 function stopScanner() {
   if (scanTimer) { clearInterval(scanTimer); scanTimer = null; }
+  toggleScannerUI(false);
   if (scanStream) { scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
 }
 
@@ -10810,8 +10942,10 @@ document.getElementById("btnScanClose").addEventListener("click", () => {
   lastScanId = null;
 });
 
-// Mulakan scanner hanya pada peranti dengan kamera; desktop tanpa kamera akan papar mesej
-startScanner();
+// Scanner dikawal melalui butang Mula/Berhenti
+document.getElementById("btnScanToggle").addEventListener("click", () => {
+  if (scanStream) { stopScanner(); } else { startScanner(); }
+});
 window.addEventListener("beforeunload", stopScanner);
 
 // Pintu ujian: ?simulate=HMS-XXXX menjalankan aliran scan tanpa kamera (untuk demo/ujian)
