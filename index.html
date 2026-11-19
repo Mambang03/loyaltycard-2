@@ -10882,15 +10882,26 @@ async function initFirebase() {
     // Live sync: owner and customer views refresh automatically
     onValue(ref(db, "customers"), s => {
       const data = s.val() || {};
-      const list = Object.entries(data).map(([id, c]) => ({
-        id,
-        name: c.name,
-        stamps: c.stamps || 0,
-        redeemed: !!c.redeemed,
-        history: c.history ? Object.values(c.history) : []
-      }));
+      const dbMap = {};
+      const list = Object.entries(data).map(([id, c]) => {
+        dbMap[id] = true;
+        return {
+          id,
+          name: c.name,
+          stamps: c.stamps || 0,
+          redeemed: !!c.redeemed,
+          history: c.history ? Object.values(c.history) : []
+        };
+      });
+      // kekalkan pelanggan tempatan yang belum sampai ke DB (elak snapshot lama buang pelanggan baru)
+      customers.forEach(lc => { if (!dbMap[lc.id]) list.push(lc); });
       if (list.length) customers = list;
-      if (!customers.some(c => c.id === selectedId)) selectedId = customers[0].id;
+      // Pada mod pelanggan (?id=...), pilihan mesti kekal pada pelanggan itu — jangan terpatal ke pelanggan pertama
+      if (isPublic) {
+        const target = customers.find(c => c.id.toLowerCase() === (publicId || "").toLowerCase());
+        if (target) selectedId = target.id;
+      }
+      if (!selectedId || !customers.some(c => c.id === selectedId)) selectedId = customers[0].id;
       renderAll();
     });
     onValue(ref(db, "settings"), s => {
