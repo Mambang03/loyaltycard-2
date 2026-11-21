@@ -34,26 +34,26 @@ input:focus{border-color:var(--ink)}
 .head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .head h2{margin:0}
 /* card */
-.scene{perspective:1600px}
-.flip{position:relative;aspect-ratio:1.586/1;min-height:280px;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.1,.2,1)}
+.scene{perspective:1600px;container-type:inline-size;width:100%;max-width:var(--cw,560px);margin:0 auto}
+.flip{position:relative;aspect-ratio:1.586/1;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.1,.2,1)}
 .flip.flipped{transform:rotateY(180deg)}
-.face{position:absolute;inset:0;border-radius:22px;padding:26px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:auto;display:flex;flex-direction:column}
+.face{position:absolute;inset:0;border-radius:4.5cqw;padding:5cqw;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:auto;display:flex;flex-direction:column}
 .front{background:radial-gradient(120% 90% at 85% 0%,#2b2b2b 0%,#141414 55%,#0a0a0a 100%);color:#fff;justify-content:space-between;box-shadow:0 24px 50px -24px rgba(0,0,0,.55)}
-.front .brand{display:flex;align-items:center;gap:10px;font:400 22px var(--serif);letter-spacing:.08em}
+.front .brand{display:flex;align-items:center;gap:2cqw;font:400 clamp(15px,4.4cqw,26px) var(--serif);letter-spacing:.08em}
 .front .brand i{width:8px;height:8px;border-radius:50%;background:var(--accent)}
-.front .tag{font-size:12px;color:#9a9a92;margin-top:4px}
-.front .who{font:400 40px/1.05 var(--serif);overflow-wrap:anywhere}
-.front .mid small{display:block;margin-top:8px;color:#9a9a92;font-size:13px;letter-spacing:.1em}
-.front .foot{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;font-size:13px;color:#cfcfc8}
-.chip{width:44px;height:32px;border-radius:7px;border:1px solid #555;background:linear-gradient(135deg,#8d8d86,#d6d6cf 50%,#8d8d86)}
-.back{background:var(--surface);border:1px solid var(--line);transform:rotateY(180deg);gap:14px}
+.front .tag{font-size:clamp(10px,2.4cqw,13px);color:#9a9a92;margin-top:4px}
+.front .who{font:400 clamp(24px,8cqw,46px)/1.05 var(--serif);overflow-wrap:anywhere}
+.front .mid small{display:block;margin-top:1.4cqw;color:#9a9a92;font-size:clamp(10px,2.6cqw,14px);letter-spacing:.1em}
+.front .foot{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;font-size:clamp(10px,2.6cqw,14px);color:#cfcfc8}
+.chip{width:9cqw;height:6.5cqw;min-width:30px;min-height:22px;border-radius:7px;border:1px solid #555;background:linear-gradient(135deg,#8d8d86,#d6d6cf 50%,#8d8d86)}
+.back{background:var(--surface);border:1px solid var(--line);transform:rotateY(180deg);gap:2.6cqw}
 .back .id{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.back .nm{font:400 26px/1.1 var(--serif);overflow-wrap:anywhere}
-.back .cid{font-size:13px;color:var(--mute);margin-top:3px}
-.badge{font-size:12px;border:1px solid var(--ink);border-radius:999px;padding:4px 11px;white-space:nowrap;height:fit-content}
+.back .nm{font:400 clamp(18px,5.4cqw,30px)/1.1 var(--serif);overflow-wrap:anywhere}
+.back .cid{font-size:clamp(10px,2.6cqw,14px);color:var(--mute);margin-top:3px}
+.badge{font-size:clamp(10px,2.4cqw,13px);border:1px solid var(--ink);border-radius:999px;padding:4px 11px;white-space:nowrap;height:fit-content}
 .badge.on{background:var(--ink);color:#fff}
-.stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:9px;max-width:420px}
-.slot{aspect-ratio:1;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--paper)}
+.stamps{display:grid;grid-template-columns:repeat(var(--cols,5),1fr);gap:1.8cqw}
+.slot{aspect-ratio:1;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:clamp(9px,3.2cqw,16px);background:var(--paper)}
 .slot.f{background:var(--ink);border-color:var(--ink);color:#fff}
 .slot.n{border:1.5px solid var(--accent);background:var(--surface)}
 .slot.st{animation:pop .35s cubic-bezier(.2,1.4,.4,1) both}
@@ -61,8 +61,9 @@ input:focus{border-color:var(--ink)}
 .bar{height:4px;background:var(--paper);border-radius:9px;margin-top:auto;position:relative}
 .bar b{display:block;height:100%;background:var(--ink);border-radius:9px;width:0;transition:width .4s}
 .bar b::after{content:"";position:absolute;top:-3px;width:10px;height:10px;border-radius:50%;background:var(--accent);margin-left:-5px}
-.plabel{font-size:13px;color:var(--mute)}
+.plabel{font-size:clamp(11px,2.6cqw,14px);color:var(--mute)}
 .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:999px;overflow:hidden}.seg button{border:0;border-radius:0;padding:8px 13px;font-size:13px}.seg button.on{background:var(--ink);color:#fff}
 .qr{display:flex;align-items:center;gap:18px;margin-top:20px;flex-wrap:wrap}
 .qr .box{border:1px solid var(--line);border-radius:14px;padding:8px;background:#fff;line-height:0}
 .qr p{font-size:13px;color:var(--mute);max-width:260px}
@@ -104,6 +105,8 @@ canvas{width:100%;height:auto;display:block}
 .toast.show{opacity:1}
 body.pub .owner{display:none!important}
 body.pub .grid{grid-template-columns:minmax(0,520px);justify-content:center}
+.tblw{overflow-x:auto}
+@media(max-width:480px){body{padding:16px 12px 48px}.panel{padding:16px;border-radius:16px}.logo{font-size:28px}.row button{flex:1 1 auto}.stat b{font-size:30px}.stat{padding:6px 8px}.qr{justify-content:center;text-align:center}}
 @media(max-width:820px){.grid{grid-template-columns:1fr}.front .who{font-size:32px}.stat{padding:6px 12px}.stat b{font-size:38px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -139,6 +142,7 @@ body.pub .grid{grid-template-columns:minmax(0,520px);justify-content:center}
         </div></div>
         <div class="row">
           <button id="btnFlip" class="sm">Flip card</button>
+          <div class="seg owner" id="sizeSeg" role="group" aria-label="Card size"><button data-s="360">S</button><button data-s="520" class="on">M</button><button data-s="720">L</button></div>
           <button class="solid owner" id="btnAdd">Add stamp</button>
           <button class="owner" id="btnRemove">Remove stamp</button>
           <button class="owner" id="btnRedeem">Mark redeemed</button>
@@ -155,7 +159,7 @@ body.pub .grid{grid-template-columns:minmax(0,520px);justify-content:center}
       <div class="panel">
         <h2>Customers</h2>
         <div class="toolbar"><input type="text" id="inpName" placeholder="New customer name"><button class="solid" id="btnAddCustomer">Add customer</button><button class="sm" id="btnCsv">Export CSV</button></div>
-        <table><thead><tr><th>Customer</th><th>ID</th><th>Stamps</th><th>Status</th></tr></thead><tbody id="dashBody"></tbody></table>
+        <div class="tblw"><table><thead><tr><th>Customer</th><th>ID</th><th>Stamps</th><th>Status</th></tr></thead><tbody id="dashBody"></tbody></table></div>
         <p class="hint">Select a customer to load their card. Only the owner can stamp; customers see a read-only card.</p>
       </div>
       <div class="panel"><h2>Stamps over time</h2><canvas id="chartCanvas" width="880" height="220"></canvas></div>
@@ -12649,6 +12653,7 @@ function renderCard(){
     if(anim&&i<c.stamps){s.classList.add("st");s.style.animationDelay=i*.1+"s"}
     g.appendChild(s);
   }
+  g.style.setProperty('--cols',settings.goal<=10?5:10);
   const pct=Math.min(100,c.stamps/settings.goal*100),f=$("progressFill");f.style.width=pct+"%";
   const left=Math.max(0,settings.goal-c.stamps);
   $("progressLabel").textContent=c.stamps>=settings.goal?"Goal reached. "+settings.reward+" is ready to claim.":c.stamps+" of "+settings.goal+" stamps. "+left+" more for a "+settings.reward.toLowerCase()+".";
@@ -12697,6 +12702,9 @@ $("btnCsv").onclick=()=>{
   a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="hous-man-salon-loyalty.csv";a.click();URL.revokeObjectURL(a.href);toast("CSV exported");
 };
 $("btnDownloadQr").onclick=downloadQr;
+function setSize(s){document.documentElement.style.setProperty("--cw",s+"px");document.querySelectorAll("#sizeSeg button").forEach(b=>b.classList.toggle("on",b.dataset.s==s));try{localStorage.setItem("hous-card-size",s)}catch(e){}}
+document.querySelectorAll("#sizeSeg button").forEach(b=>b.onclick=()=>setSize(b.dataset.s));
+try{const s=localStorage.getItem("hous-card-size");if(s)setSize(s)}catch(e){}
 $("btnFlip").onclick=()=>$("flipCard").classList.toggle("flipped");
 
 /* scanner */
